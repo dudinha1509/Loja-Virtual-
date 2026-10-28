@@ -1,0 +1,1078 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bella Store</title>
+    <style>
+      :root {
+        --bg: #fffaf8;
+        --bg-alt: #f7e8e8;
+        --panel: #ffffff;
+        --text: #2d1d1d;
+        --muted: #756363;
+        --primary: #d75d7b;
+        --primary-dark: #ba3f63;
+        --accent: #f3c7d2;
+        --border: rgba(180, 113, 130, 0.2);
+        --shadow: 0 18px 32px rgba(133, 80, 93, 0.12);
+      }
+
+      body.escuro {
+        --bg: #1b1116;
+        --bg-alt: #2a1a20;
+        --panel: #27191d;
+        --text: #fce9ee;
+        --muted: #d0adb5;
+        --primary: #f08aa8;
+        --primary-dark: #df6c90;
+        --accent: #5a2a3a;
+        --border: rgba(255, 255, 255, 0.08);
+        --shadow: 0 18px 32px rgba(0, 0, 0, 0.25);
+      }
+
+      * { box-sizing: border-box; }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .container {
+        width: min(1120px, calc(100% - 2rem));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        background: rgba(255, 255, 255, 0.6);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(8px);
+        position: sticky;
+        top: 0;
+        z-index: 30;
+      }
+
+      body.escuro .topbar {
+        background: rgba(27, 17, 22, 0.8);
+      }
+
+      .topbar-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 72px;
+        gap: 1rem;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .logo-mark {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--primary), #f7b3c6);
+        color: white;
+        font-size: 1.2rem;
+      }
+
+      .navegacao {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        color: var(--muted);
+      }
+
+      .navegacao a {
+        transition: color 0.2s ease;
+      }
+
+      .navegacao a:hover {
+        color: var(--primary);
+      }
+
+      .acoes {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .botao {
+        border: none;
+        border-radius: 999px;
+        background: var(--primary);
+        color: #fff;
+        transition: transform 0.2s ease, background 0.2s ease;
+        padding: 0.8rem 1.2rem;
+        font-weight: 700;
+      }
+
+      .botao:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+
+      .botao-secundario {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .botao-carrinho {
+        position: relative;
+      }
+
+      .contador {
+        min-width: 1.3rem;
+        height: 1.3rem;
+        border-radius: 50%;
+        display: inline-grid;
+        place-items: center;
+        background: var(--accent);
+        color: var(--text);
+        position: absolute;
+        top: -0.25rem;
+        right: -0.2rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .btn-menu {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        width: 2.8rem;
+        height: 2.8rem;
+        border-radius: 0.7rem;
+      }
+
+      .hero {
+        padding: 2rem 0 1rem;
+      }
+
+      .hero-shell {
+        border-radius: 1.7rem;
+        background: linear-gradient(135deg, var(--bg-alt), rgba(255, 255, 255, 0.2));
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .carrossel {
+        position: relative;
+      }
+
+      .slide {
+        display: none;
+        min-height: 420px;
+        position: relative;
+        isolation: isolate;
+      }
+
+      .slide.ativo {
+        display: block;
+      }
+
+      .slide img {
+        width: 100%;
+        height: 420px;
+        object-fit: cover;
+      }
+
+      .slide-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(21, 13, 16, 0.66), rgba(21, 13, 16, 0.18));
+      }
+
+      .slide-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 3rem;
+      }
+
+      .slide-box {
+        max-width: 420px;
+        color: white;
+      }
+
+      .slide-box p {
+        margin: 0 0 0.8rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: 0.73rem;
+        opacity: 0.9;
+      }
+
+      .slide-box h1 {
+        margin: 0 0 1rem;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        line-height: 1.05;
+      }
+
+      .slide-box .botao {
+        margin-top: 1rem;
+      }
+
+      .carrossel-controles {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1rem;
+        pointer-events: none;
+      }
+
+      .carrossel-controles button {
+        pointer-events: auto;
+        width: 2.8rem;
+        height: 2.8rem;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+        color: white;
+        backdrop-filter: blur(5px);
+      }
+
+      .indicadores {
+        display: flex;
+        justify-content: center;
+        gap: 0.6rem;
+        padding: 1rem 0 0;
+      }
+
+      .indicadores button {
+        width: 0.8rem;
+        height: 0.8rem;
+        border-radius: 50%;
+        border: none;
+        background: rgba(125, 82, 92, 0.3);
+      }
+
+      .indicadores button.ativo {
+        background: var(--primary);
+      }
+
+      .produtos {
+        padding: 2.5rem 0 4rem;
+      }
+
+      .cabecalho-produtos {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.3rem;
+      }
+
+      .cabecalho-produtos h2 {
+        margin: 0;
+        font-size: clamp(1.6rem, 2vw, 2.2rem);
+      }
+
+      .area-pesquisa {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 0.25rem 0.75rem 0.25rem 1rem;
+        box-shadow: var(--shadow);
+      }
+
+      .area-pesquisa input {
+        border: none;
+        background: transparent;
+        min-width: 220px;
+        font: inherit;
+        color: var(--text);
+        outline: none;
+      }
+
+      .lista-produtos {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.4rem;
+      }
+
+      .produto {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 1.2rem;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .produto img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+      }
+
+      .produto-info {
+        padding: 1rem 1rem 1.2rem;
+      }
+
+      .produto-info h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.15rem;
+      }
+
+      .produto-info p {
+        color: var(--muted);
+        margin: 0 0 0.9rem;
+        min-height: 52px;
+      }
+
+      .linha-preco {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-top: 0.8rem;
+      }
+
+      .preco {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .comprar {
+        padding: 0.75rem 1rem;
+      }
+
+      .sem-resultados {
+        text-align: center;
+        color: var(--muted);
+        margin-top: 1rem;
+      }
+
+      .aviso {
+        position: fixed;
+        left: 50%;
+        bottom: 1.5rem;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(17, 17, 17, 0.92);
+        color: white;
+        padding: 0.8rem 1.2rem;
+        border-radius: 999px;
+        box-shadow: var(--shadow);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        z-index: 80;
+      }
+
+      .aviso.visivel {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .fundo-carrinho {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 10, 12, 0.45);
+        z-index: 40;
+      }
+
+      .painel-carrinho {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: min(420px, 100%);
+        height: 100vh;
+        background: var(--panel);
+        border-left: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        z-index: 50;
+      }
+
+      .painel-carrinho[hidden],
+      .fundo-carrinho[hidden] {
+        display: none !important;
+      }
+
+      .painel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.2rem 1.2rem 0.8rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .painel-header h3 {
+        margin: 0;
+      }
+
+      .fechar-carrinho {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 0.65rem;
+        width: 2.2rem;
+        height: 2.2rem;
+      }
+
+      .itens-carrinho {
+        padding: 1rem 1rem 0;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .item-carrinho {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .item-carrinho strong {
+        display: block;
+        margin-bottom: 0.2rem;
+      }
+
+      .item-carrinho p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .controles-quantidade {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        margin-top: 0.55rem;
+      }
+
+      .controles-quantidade button {
+        width: 1.8rem;
+        height: 1.8rem;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+      }
+
+      .carrinho-footer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1rem 1.25rem;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .total-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+      }
+
+      .total-line strong {
+        font-size: 1.35rem;
+      }
+
+      .acoes-carrinho {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .acoes-carrinho button {
+        flex: 1;
+      }
+
+      footer {
+        padding: 2rem 0 3rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 960px) {
+        .lista-produtos {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .navegacao {
+          position: absolute;
+          top: 72px;
+          left: 1rem;
+          right: 1rem;
+          display: none;
+          flex-direction: column;
+          align-items: flex-start;
+          background: var(--panel);
+          border: 1px solid var(--border);
+          border-radius: 1rem;
+          padding: 1rem;
+          box-shadow: var(--shadow);
+        }
+
+        .navegacao.aberto {
+          display: flex;
+        }
+
+        .btn-menu {
+          display: inline-grid;
+          place-items: center;
+        }
+
+        .cabecalho-produtos {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .area-pesquisa {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .lista-produtos {
+          grid-template-columns: 1fr;
+        }
+
+        .slide-content {
+          padding: 1.25rem;
+        }
+
+        .slide-box {
+          max-width: 100%;
+        }
+
+        .area-pesquisa input {
+          min-width: 0;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a href="#inicio" class="logo" aria-label="Prado Boutique home">
+          <span class="logo-mark">P</span>
+          <span>Prado Boutique</span>
+        </a>
+
+        <nav id="menu" class="navegacao" aria-label="Menu principal">
+          <a href="#inicio">Início</a>
+          <a href="#produtos">Coleções</a>
+          <a href="#sobre">Sobre</a>
+          <a href="#contato">Contato</a>
+        </nav>
+
+        <div class="acoes">
+          <button id="btnTema" class="botao botao-secundario" type="button" aria-label="Alternar tema">🌙</button>
+          <button id="btnCarrinho" class="botao botao-carrinho" type="button" aria-label="Abrir carrinho">
+            🛒 <span id="contador" class="contador">0</span>
+          </button>
+          <button id="btnMenu" class="btn-menu" type="button" aria-label="Abrir menu">☰</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="inicio">
+      <section class="hero container" aria-label="Promoções">
+        <div class="hero-shell">
+          <div class="carrossel">
+            <div class="slide ativo">
+              <img src="./img%20carroc%C3%A9u/images.jpeg" alt="Coleção Prado Boutique" />
+              <div class="slide-overlay"></div>
+              <div class="slide-content">
+                <div class="slide-box">
+                  <p>Nova coleção</p>
+                  <h1>Elegância que inspira confiança</h1>
+                  <button class="botao" type="button" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">Ver coleção</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="slide">
+              <img src="./img%20carroc%C3%A9u/images%20(1).jpeg" alt="Oferta de acessórios" />
+              <div class="slide-overlay"></div>
+              <div class="slide-content">
+                <div class="slide-box">
+                  <p>Até 50% OFF</p>
+                  <h1>Peças exclusivas para destacar sua personalidade</h1>
+                  <button class="botao" type="button" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">Confira</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="slide">
+              <img src="./img%20carroc%C3%A9u/acessorios-femininos.png" alt="Linha casual elegante" />
+              <div class="slide-overlay"></div>
+              <div class="slide-content">
+                <div class="slide-box">
+                  <p>Elegância casual</p>
+                  <h1>Conforto e sofisticação em cada detalhe</h1>
+                  <button class="botao" type="button" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">Comprar</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="carrossel-controles" aria-label="Controle do carrossel">
+              <button id="anterior" type="button" aria-label="Slide anterior">←</button>
+              <button id="proximo" type="button" aria-label="Próximo slide">→</button>
+            </div>
+          </div>
+
+          <div id="indicadores" class="indicadores" aria-label="Indicadores do carrossel"></div>
+        </div>
+      </section>
+
+      <section id="produtos" class="produtos container" aria-label="Produtos em destaque">
+        <div class="cabecalho-produtos">
+          <h2>Produtos em destaque</h2>
+
+          <div class="acoes">
+            <button id="btnPesquisa" class="botao botao-secundario" type="button">🔎 Buscar</button>
+          </div>
+        </div>
+
+        <div id="areaPesquisa" class="area-pesquisa" hidden>
+          <input id="campoPesquisa" type="search" placeholder="Buscar produtos..." aria-label="Buscar produtos" />
+        </div>
+
+        <div id="listaProdutos" class="lista-produtos" aria-live="polite"></div>
+        <p id="semResultados" class="sem-resultados" hidden>Nenhum produto encontrado.</p>
+      </section>
+    </main>
+
+    <div id="fundoCarrinho" class="fundo-carrinho" hidden></div>
+
+    <aside id="painelCarrinho" class="painel-carrinho" aria-label="Carrinho de compras" hidden>
+      <div class="painel-header">
+        <h3>Seu carrinho</h3>
+        <button id="fecharCarrinho" class="fechar-carrinho" type="button" aria-label="Fechar carrinho">✕</button>
+      </div>
+
+      <div id="itensCarrinho" class="itens-carrinho"></div>
+
+      <div class="carrinho-footer">
+        <div class="total-line">
+          <span>Total</span>
+          <strong id="total">R$ 0,00</strong>
+        </div>
+
+        <div class="acoes-carrinho">
+          <button id="limparCarrinho" class="botao botao-secundario" type="button">Limpar</button>
+          <button id="finalizar" class="botao" type="button">Finalizar</button>
+        </div>
+      </div>
+    </aside>
+
+    <div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+
+    <footer id="contato" class="container">
+      <p>© 2026 Prado Boutique — Desenvolvido por Duda Prado</p>
+    </footer>
+
+    <script>
+      "use strict";
+
+      const whatsappLoja = "5511999999999";
+
+      const produtos = [
+        {
+          id: 1,
+          nome: "Vestido Floral",
+          preco: 89.9,
+          descricao: "Vestido delicado, confortável e elegante.",
+          imagem: "./img%20cart%C3%A3o/vestido_lais_chiffon_floral_soltinho_manga_laco_e_rendas_verde_menta_3251_1_95f9f171d5986676aa584509527bb3e8.webp"
+        },
+        {
+          id: 2,
+          nome: "Óculos de Sol",
+          preco: 159.9,
+          descricao: "Tênis estiloso para o dia a dia.",
+          imagem: "./img%20cart%C3%A3o/images.jpeg"
+        },
+        {
+          id: 3,
+          nome: "Tênis Casual",
+          preco: 119.9,
+          descricao: "Bolsa moderna para completar seu look.",
+          imagem: "./img%20cart%C3%A3o/shopping.webp"
+        },
+        {
+          id: 4,
+          nome: "Bolsa Feminina",
+          preco: 69.9,
+          descricao: "Um acessório lindo e cheio de charme.",
+          imagem: "./img%20cart%C3%A3o/br-11134207-81ztc-mk3vv9e4cy6a2f.jpeg"
+        }
+      ];
+
+      const dinheiro = valor =>
+        valor.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL"
+        });
+
+      const listaProdutos = document.getElementById("listaProdutos");
+      const contador = document.getElementById("contador");
+      const painelCarrinho = document.getElementById("painelCarrinho");
+      const fundoCarrinho = document.getElementById("fundoCarrinho");
+      const itensCarrinho = document.getElementById("itensCarrinho");
+      const total = document.getElementById("total");
+      const aviso = document.getElementById("aviso");
+      const areaPesquisa = document.getElementById("areaPesquisa");
+      const campoPesquisa = document.getElementById("campoPesquisa");
+      const btnTema = document.getElementById("btnTema");
+      const btnMenu = document.getElementById("btnMenu");
+      const menu = document.getElementById("menu");
+      const slides = document.querySelectorAll(".slide");
+      const indicadores = document.getElementById("indicadores");
+
+      let tempoAviso;
+      let carrinho = [];
+      let slideAtual = 0;
+      let intervalo;
+
+      function carregarCarrinho() {
+        try {
+          const dados = JSON.parse(localStorage.getItem("bellaCarrinho") || "[]");
+          if (!Array.isArray(dados)) return [];
+
+          return dados.filter(item =>
+            produtos.some(p => p.id === item.id) &&
+            Number.isInteger(item.quantidade) &&
+            item.quantidade > 0
+          );
+        } catch {
+          return [];
+        }
+      }
+
+      function salvarCarrinho() {
+        localStorage.setItem("bellaCarrinho", JSON.stringify(carrinho));
+      }
+
+      function mostrarAviso(mensagem) {
+        if (!aviso) return;
+
+        aviso.textContent = mensagem;
+        aviso.classList.add("visivel");
+
+        clearTimeout(tempoAviso);
+        tempoAviso = setTimeout(() => aviso.classList.remove("visivel"), 2500);
+      }
+
+      function mostrarProdutos(filtro = "") {
+        if (!listaProdutos) return;
+
+        const termo = filtro.trim().toLowerCase();
+        const encontrados = produtos.filter(produto =>
+          produto.nome.toLowerCase().includes(termo) ||
+          produto.descricao.toLowerCase().includes(termo)
+        );
+
+        listaProdutos.innerHTML = encontrados.map(produto => `
+          <article class="produto">
+            <img src="${produto.imagem}" alt="${produto.nome}" loading="lazy" />
+            <div class="produto-info">
+              <h3>${produto.nome}</h3>
+              <p>${produto.descricao}</p>
+              <div class="linha-preco">
+                <span class="preco">${dinheiro(produto.preco)}</span>
+                <button class="botao comprar" data-id="${produto.id}" type="button">Comprar</button>
+              </div>
+            </div>
+          </article>
+        `).join("")
+
+        const semResultados = document.getElementById("semResultados");
+        if (semResultados) semResultados.hidden = encontrados.length > 0;
+      }
+
+      function adicionarCarrinho(id) {
+        const produto = produtos.find(p => p.id === id);
+        if (!produto) return;
+
+        const item = carrinho.find(p => p.id === id);
+        if (item) {
+          item.quantidade += 1;
+        } else {
+          carrinho.push({ id, quantidade: 1 });
+        }
+
+        atualizarCarrinho();
+        mostrarAviso(`${produto.nome} adicionado ao carrinho! 💗`);
+      }
+
+      function alterarQuantidade(id, mudanca) {
+        const item = carrinho.find(p => p.id === id);
+        if (!item) return;
+
+        item.quantidade += mudanca;
+
+        if (item.quantidade <= 0) {
+          carrinho = carrinho.filter(p => p.id !== id);
+        }
+
+        atualizarCarrinho();
+      }
+
+      function atualizarCarrinho() {
+        if (!itensCarrinho || !contador || !total) return;
+
+        let valorTotal = 0;
+        let quantidadeTotal = 0;
+
+        itensCarrinho.innerHTML = "";
+
+        if (carrinho.length === 0) {
+          itensCarrinho.innerHTML = "<p>Seu carrinho está vazio 💗</p>";
+        }
+
+        carrinho.forEach(item => {
+          const produto = produtos.find(p => p.id === item.id);
+          if (!produto) return;
+
+          valorTotal += produto.preco * item.quantidade;
+          quantidadeTotal += item.quantidade;
+
+          const div = document.createElement("div");
+          div.className = "item-carrinho";
+          div.innerHTML = `
+            <div>
+              <strong>${produto.nome}</strong>
+              <p>${dinheiro(produto.preco)}</p>
+              <div class="controles-quantidade">
+                <button data-id="${item.id}" data-mudanca="-1" type="button" aria-label="Diminuir quantidade">−</button>
+                <span>${item.quantidade}</span>
+                <button data-id="${item.id}" data-mudanca="1" type="button" aria-label="Aumentar quantidade">+</button>
+              </div>
+            </div>
+            <strong>${dinheiro(produto.preco * item.quantidade)}</strong>
+          `;
+
+          itensCarrinho.appendChild(div);
+        });
+
+        contador.textContent = String(quantidadeTotal);
+        total.textContent = dinheiro(valorTotal);
+        salvarCarrinho();
+      }
+
+      function abrirCarrinho() {
+        if (painelCarrinho) painelCarrinho.hidden = false;
+        if (fundoCarrinho) fundoCarrinho.hidden = false;
+      }
+
+      function fecharCarrinho() {
+        if (painelCarrinho) painelCarrinho.hidden = true;
+        if (fundoCarrinho) fundoCarrinho.hidden = true;
+      }
+
+      fecharCarrinho();
+
+      function aplicarTema(escuro) {
+        document.body.classList.toggle("escuro", escuro);
+        if (btnTema) btnTema.textContent = escuro ? "☀️" : "🌙";
+        localStorage.setItem("bellaTema", escuro ? "escuro" : "claro");
+      }
+
+      function mudarSlide(indice) {
+        if (!slides.length) return;
+
+        if (slides[slideAtual]) slides[slideAtual].classList.remove("ativo");
+        if (bolinhas && bolinhas[slideAtual]) bolinhas[slideAtual].classList.remove("ativo");
+
+        slideAtual = (indice + slides.length) % slides.length;
+
+        if (slides[slideAtual]) slides[slideAtual].classList.add("ativo");
+        if (bolinhas && bolinhas[slideAtual]) bolinhas[slideAtual].classList.add("ativo");
+      }
+
+      function reiniciarCarrossel() {
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+          mudarSlide(slideAtual + 1);
+        }, 5000);
+      }
+
+      carrinho = carregarCarrinho();
+      mostrarProdutos();
+      atualizarCarrinho();
+
+      if (listaProdutos) {
+        listaProdutos.addEventListener("click", evento => {
+          const botao = evento.target.closest(".comprar");
+          if (!botao) return;
+          adicionarCarrinho(Number(botao.dataset.id));
+        });
+      }
+
+      if (itensCarrinho) {
+        itensCarrinho.addEventListener("click", evento => {
+          const botao = evento.target.closest("button[data-id]");
+          if (!botao) return;
+          alterarQuantidade(Number(botao.dataset.id), Number(botao.dataset.mudanca));
+        });
+      }
+
+      if (document.getElementById("btnCarrinho")) {
+        document.getElementById("btnCarrinho").addEventListener("click", abrirCarrinho);
+      }
+
+      if (document.getElementById("fecharCarrinho")) {
+        document.getElementById("fecharCarrinho").addEventListener("click", fecharCarrinho);
+      }
+
+      if (fundoCarrinho) {
+        fundoCarrinho.addEventListener("click", fecharCarrinho);
+      }
+
+      if (document.getElementById("limparCarrinho")) {
+        document.getElementById("limparCarrinho").addEventListener("click", () => {
+          carrinho = [];
+          atualizarCarrinho();
+          mostrarAviso("Carrinho esvaziado!");
+        });
+      }
+
+      if (document.getElementById("finalizar")) {
+        document.getElementById("finalizar").addEventListener("click", () => {
+          if (carrinho.length === 0) {
+            mostrarAviso("Adicione produtos antes de finalizar!");
+            return;
+          }
+
+          let mensagem = "Olá! Gostaria de fazer um pedido na Prado Boutique:\n\n";
+          let valorTotal = 0;
+
+          carrinho.forEach(item => {
+            const produto = produtos.find(p => p.id === item.id);
+            if (!produto) return;
+
+            const subtotal = produto.preco * item.quantidade;
+            valorTotal += subtotal;
+            mensagem += `${produto.nome}\nQuantidade: ${item.quantidade}\nSubtotal: ${dinheiro(subtotal)}\n\n`;
+          });
+
+          mensagem += `TOTAL: ${dinheiro(valorTotal)}`;
+          const url = `https://wa.me/${whatsappLoja}?text=${encodeURIComponent(mensagem)}`;
+          window.open(url, "_blank", "noopener,noreferrer");
+        });
+      }
+
+      if (document.getElementById("btnPesquisa")) {
+        document.getElementById("btnPesquisa").addEventListener("click", () => {
+          if (areaPesquisa) {
+            areaPesquisa.hidden = !areaPesquisa.hidden;
+            if (!areaPesquisa.hidden && campoPesquisa) campoPesquisa.focus();
+            if (areaPesquisa.hidden) {
+              if (campoPesquisa) campoPesquisa.value = "";
+              mostrarProdutos();
+            }
+          }
+        });
+      }
+
+      if (campoPesquisa) {
+        campoPesquisa.addEventListener("input", () => {
+          mostrarProdutos(campoPesquisa.value);
+        });
+      }
+
+      if (btnTema) {
+        btnTema.addEventListener("click", () => {
+          aplicarTema(!document.body.classList.contains("escuro"));
+        });
+      }
+
+      if (btnMenu) {
+        btnMenu.addEventListener("click", () => {
+          menu.classList.toggle("aberto");
+        });
+      }
+
+      if (menu) {
+        menu.querySelectorAll("a").forEach(link => {
+          link.addEventListener("click", () => menu.classList.remove("aberto"));
+        });
+      }
+
+      if (indicadores && slides.length) {
+        slides.forEach((_, indice) => {
+          const bolinha = document.createElement("button");
+          bolinha.type = "button";
+          bolinha.setAttribute("aria-label", `Ir para promoção ${indice + 1}`);
+          bolinha.addEventListener("click", () => {
+            mudarSlide(indice);
+            reiniciarCarrossel();
+          });
+          indicadores.appendChild(bolinha);
+        });
+      }
+
+      const bolinhas = indicadores ? indicadores.querySelectorAll("button") : [];
+
+      document.addEventListener("keydown", evento => {
+        if (evento.key === "Escape") fecharCarrinho();
+      });
+
+      if (document.getElementById("anterior")) {
+        document.getElementById("anterior").addEventListener("click", () => {
+          mudarSlide(slideAtual - 1);
+          reiniciarCarrossel();
+        });
+      }
+
+      if (document.getElementById("proximo")) {
+        document.getElementById("proximo").addEventListener("click", () => {
+          mudarSlide(slideAtual + 1);
+          reiniciarCarrossel();
+        });
+      }
+
+      aplicarTema(localStorage.getItem("bellaTema") === "escuro");
+      if (slides.length) {
+        mudarSlide(0);
+        reiniciarCarrossel();
+      }
+    </script>
+  </body>
+</html>
